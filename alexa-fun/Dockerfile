@@ -1,20 +1,21 @@
-ARG BUILD_FROM
+ARG BUILD_FROM=node:20-alpine
 FROM ${BUILD_FROM} AS builder
 
-# Install git und build tools
-RUN apk add --no-cache git
-
-# Clone das Repo
 WORKDIR /build
-RUN git clone --depth 1 https://github.com/macmonkey/alexa-fun.git .
 
 # Frontend bauen
+COPY frontend/package*.json ./frontend/
 WORKDIR /build/frontend
-RUN npm ci && npm run build
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
 # Backend bauen
 WORKDIR /build/backend
-RUN npm ci && npm run build
+COPY backend/package*.json ./
+RUN npm ci
+COPY backend/ ./
+RUN npm run build
 
 # Production stage
 FROM ${BUILD_FROM}

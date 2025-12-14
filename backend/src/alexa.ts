@@ -254,7 +254,7 @@ class AlexaService extends EventEmitter {
       // Nutze den nativen sound Befehl von alexa-remote2
       this.alexa.sendSequenceCommand(
         deviceSerial,
-        'sound',
+        'sound' as any,
         soundId,
         (err) => {
           if (err) {

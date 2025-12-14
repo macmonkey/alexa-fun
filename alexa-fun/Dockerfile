@@ -1,5 +1,5 @@
-ARG BUILD_FROM=node:20-alpine
-FROM ${BUILD_FROM} AS builder
+# Build stage - eigenes Node.js Image (nicht HA base)
+FROM node:20-alpine AS builder
 
 WORKDIR /build
 
@@ -17,11 +17,12 @@ RUN npm ci
 COPY backend/ ./
 RUN npm run build
 
-# Production stage
+# Production stage - HA Base Image
+ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Install nginx und jq
-RUN apk add --no-cache nginx jq
+# Install Node.js, nginx und jq
+RUN apk add --no-cache nodejs npm nginx jq
 
 # Backend setup
 WORKDIR /app/backend

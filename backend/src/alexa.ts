@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import fs from 'fs';
 import path from 'path';
 
-const COOKIE_FILE = path.join(process.cwd(), '.alexa-cookie');
+const COOKIE_FILE = process.env.COOKIE_FILE || path.join(process.cwd(), '.alexa-cookie');
 
 interface AlexaDevice {
   serialNumber: string;

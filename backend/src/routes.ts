@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 const router = Router();
-const PRESETS_FILE = path.join(process.cwd(), 'presets.json');
+const PRESETS_FILE = process.env.PRESETS_FILE || path.join(process.cwd(), 'presets.json');
 
 // Preset-Typen
 interface Preset {

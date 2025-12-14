@@ -1,5 +1,8 @@
-# Build stage - eigenes Node.js Image (nicht HA base)
-FROM node:20-alpine AS builder
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+FROM ${BUILD_FROM}
+
+# Install Node.js, npm, nginx und jq
+RUN apk add --no-cache nodejs npm nginx jq
 
 WORKDIR /build
 
@@ -17,21 +20,17 @@ RUN npm ci
 COPY backend/ ./
 RUN npm run build
 
-# Production stage - HA Base Image
-ARG BUILD_FROM
-FROM ${BUILD_FROM}
-
-# Install Node.js, nginx und jq
-RUN apk add --no-cache nodejs npm nginx jq
-
-# Backend setup
+# Production setup
 WORKDIR /app/backend
-COPY --from=builder /build/backend/dist ./dist
-COPY --from=builder /build/backend/node_modules ./node_modules
-COPY --from=builder /build/backend/package.json ./
+RUN cp -r /build/backend/dist ./dist && \
+    cp -r /build/backend/node_modules ./node_modules && \
+    cp /build/backend/package.json ./
 
 # Frontend setup (nginx served)
-COPY --from=builder /build/frontend/dist /var/www/html
+RUN cp -r /build/frontend/dist /var/www/html
+
+# Cleanup build files
+RUN rm -rf /build
 
 # Nginx config
 COPY nginx.conf /etc/nginx/http.d/default.conf

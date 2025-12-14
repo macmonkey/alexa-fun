@@ -27,4 +27,3 @@ schema:
   openai_api_key: str?
 environment:
   NODE_ENV: production
-image: "ghcr.io/macmonkey/alexa-fun-addon-{arch}"
